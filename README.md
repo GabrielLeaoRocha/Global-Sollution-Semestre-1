@@ -129,13 +129,13 @@ contraditórias (sensor reportando dados conflitantes) e gera um diagnóstico.
 
 ## 6. Como Executar
 
-**Requisitos:** Python 3.8+ (não usa bibliotecas externas, apenas `csv` e `os`
-da biblioteca padrão).
+**Requisitos:** Python 3.10+ (uso de type hints `X | None`; não usa bibliotecas
+externas, apenas `csv` e `os` da biblioteca padrão).
 
 ```bash
 git clone https://github.com/GabrielLeaoRocha/Global-Sollution-Semestre-1.git
 cd Global-Sollution-Semestre-1
-python3 src/sistema.py
+python3 src/sistema.py        # ou: python3 -m src.sistema
 ```
 
 ### Menu interativo
@@ -206,19 +206,63 @@ INCONSISTENCIAS DETECTADAS (1)
 
 ## 8. Estrutura do Repositório
 
+O código foi organizado em **pacotes Python por responsabilidade**, seguindo
+boas práticas (separação de concerns, `__init__.py` com re-exports, type hints,
+docstrings de módulo). O entrypoint exigido pelo paper (`src/sistema.py`) atua
+como orquestrador.
+
 ```
 Global-Sollution-Semestre-1/
-├── README.md                       (este arquivo)
+├── README.md
+├── .gitignore
 ├── data/
-│   ├── telemetria_missao.csv       (12 ciclos × 15 colunas)
-│   └── log_eventos.csv             (10 eventos)
+│   ├── telemetria_missao.csv         12 ciclos × 15 colunas
+│   └── log_eventos.csv               10 eventos
 ├── src/
-│   └── sistema.py                  (código único, comentado)
+│   ├── sistema.py                    entrypoint — main(), menu, pipeline
+│   ├── config.py                     constantes (faixas seguras, severidades)
+│   ├── estruturas/                   estruturas de dados (Fase 2 + Fase 3)
+│   │   ├── __init__.py
+│   │   ├── fila.py                   FilaAlertas (FIFO)
+│   │   ├── pilha.py                  PilhaEventos (LIFO)
+│   │   ├── bst.py                    Binary Search Tree por ciclo
+│   │   └── algoritmos.py             busca linear + bubble sort
+│   ├── dados/                        I/O e organização (Fase 3)
+│   │   ├── __init__.py
+│   │   ├── loader.py                 carregar_csv, carregar_telemetria
+│   │   └── organizacao.py            dicionário, hierarquia, matriz
+│   ├── logica/                       regras de negócio
+│   │   ├── __init__.py
+│   │   ├── regras.py                 avaliar_ciclo (AND/OR/NOT)
+│   │   ├── alertas.py                gerar/priorizar/enfileirar
+│   │   └── diagnostico.py            classificação + inconsistências
+│   ├── previsao/                     análise estatística
+│   │   ├── __init__.py
+│   │   └── regressao.py              regressão linear simples
+│   └── exibicao/                     camada de apresentação
+│       ├── __init__.py
+│       └── relatorios.py             funções de display no terminal
 └── docs/
-    ├── relatorio.pdf               (a entregar)
-    ├── link_video.txt              (a entregar)
-    └── uso_ia.md                   (a entregar)
+    ├── relatorio.pdf                 (a entregar)
+    ├── link_video.txt                (a entregar)
+    └── uso_ia.md                     (a entregar)
 ```
+
+### Boas práticas aplicadas
+
+- **Separação por responsabilidade** — cada pacote isolado por domínio (dados,
+  lógica, previsão, exibição, estruturas).
+- **API pública explícita** via `__all__` nos `__init__.py`.
+- **Type hints** em todas as assinaturas (`list[dict]`, `tuple[float, float]`,
+  `X | None`).
+- **Docstrings de módulo e função** explicando origem (Fase 2 / Fase 3) e
+  invariantes.
+- **Constantes centralizadas** em `config.py` (`Final[T]`) — facilita ajuste
+  de faixas sem tocar na lógica.
+- **`__slots__`** em `NoBST` para reduzir overhead de memória.
+- **Funções privadas** com prefixo `_` (ex: `_extrair_booleanas`,
+  `_classificar_previsao`).
+- **Imports absolutos** (`from src.X import Y`) — robustos e claros.
 
 ---
 
@@ -226,19 +270,19 @@ Global-Sollution-Semestre-1/
 
 | Conteúdo (paper §5) | Onde aparece no código |
 |--------------------|-------------------------|
-| Sistemas binários (F1) | `MODULOS_CRITICOS` com 0/1, regras booleanas |
-| IF/ELIF/ELSE (F1) | `avaliar_ciclo()` |
-| Faixas seguras (F1) | constantes `RESERVA_*`, `RADIACAO_*`, `COMUNICACAO_*` |
-| Portas lógicas AND/OR/NOT (F2) | regras R1–R5 em `avaliar_ciclo()` |
-| Fila FIFO (F2) | `FilaAlertas` |
-| Pilha LIFO (F2) | `PilhaEventos` |
-| Busca linear (F2) | `buscar_modulo_por_nome()` |
-| Bubble sort (F2) | `ordenar_alertas_por_severidade()` |
-| Dicionário / hash (F3) | `construir_dicionario_modulos()` |
-| Hierarquia (F3) | `construir_hierarquia()` |
-| BST (F3) | `NoBST`, `inserir_bst`, `buscar_bst`, `construir_bst_balanceada` |
-| Matriz (F3) | `construir_matriz_leituras()` |
-| Análise de dados (F3) | `regressao_linear`, `prever`, `r_quadrado` |
+| Sistemas binários (F1) | `config.MODULOS_CRITICOS` + status 0/1 em `logica/regras.py` |
+| IF/ELIF/ELSE (F1) | `logica/regras.py::avaliar_ciclo` |
+| Faixas seguras (F1) | `config.py` — `RESERVA_*`, `RADIACAO_*`, `COMUNICACAO_*` |
+| Portas lógicas AND/OR/NOT (F2) | regras R1–R5 em `logica/regras.py` |
+| Fila FIFO (F2) | `estruturas/fila.py::FilaAlertas` |
+| Pilha LIFO (F2) | `estruturas/pilha.py::PilhaEventos` |
+| Busca linear (F2) | `estruturas/algoritmos.py::buscar_modulo_por_nome` |
+| Bubble sort (F2) | `estruturas/algoritmos.py::ordenar_alertas_por_severidade` |
+| Dicionário / hash (F3) | `dados/organizacao.py::construir_dicionario_modulos` |
+| Hierarquia (F3) | `dados/organizacao.py::construir_hierarquia` |
+| BST (F3) | `estruturas/bst.py` (`NoBST`, `inserir_bst`, `buscar_bst`, `construir_bst_balanceada`) |
+| Matriz (F3) | `dados/organizacao.py::construir_matriz_leituras` |
+| Análise de dados (F3) | `previsao/regressao.py` (`regressao_linear`, `prever`, `r_quadrado`) |
 | Sustentabilidade (F1/F2/F3) | geração solar + eólica, gestão de reserva |
 
 ---
@@ -254,7 +298,7 @@ Link do vídeo (YouTube, "Não Listado"):
 ## 11. Restrições Atendidas
 
 - ✅ Python puro — somente `csv` e `os` da stdlib
-- ✅ Arquivo único de código: `src/sistema.py`
+- ✅ Entrypoint `src/sistema.py` exigido pelo paper
 - ✅ Dados em CSV externo legível (`data/*.csv`)
-- ✅ Executa sem erros via `python3 src/sistema.py`
-- ✅ Código comentado, funções com docstrings
+- ✅ Executa sem erros via `python3 src/sistema.py` ou `python3 -m src.sistema`
+- ✅ Código comentado, funções com docstrings e type hints
