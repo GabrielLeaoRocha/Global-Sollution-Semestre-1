@@ -1,0 +1,11 @@
+id,ciclo,tipo,modulo,descricao,severidade
+1,2,REINICIO,comunicacao,Reinicializacao programada do modulo de comunicacao,NORMAL
+2,4,MUDANCA_PRIORIDADE,laboratorio,Laboratorio reduzido para modo standby por baixa geracao solar,ALERTA
+3,5,ALERTA,energia,Queda na geracao solar detectada por nuvens densas,ALERTA
+4,7,ALERTA,habitat,Velocidade de vento elevada acionou compensacao termica do habitat,NORMAL
+5,8,FALHA,comunicacao,Sensor de qualidade reportando 0 com modulo ativo - leitura conflitante,ALERTA
+6,9,FALHA,comunicacao,Modulo de comunicacao perdeu link com base orbital,CRITICO
+7,10,FALHA,armazenamento,Modulo de armazenamento desligado para preservar reserva,CRITICO
+8,11,ECONOMIA,laboratorio,Laboratorio desligado - modo de economia energetica ativado,CRITICO
+9,11,MUDANCA_PRIORIDADE,energia,Prioridade redirecionada exclusivamente para suporte a vida,CRITICO
+10,12,ALERTA,energia,Reserva critica abaixo de 20% - alerta automatico emitido,CRITICO
