@@ -8,6 +8,9 @@
 | Nome | RM |
 |------|-----|
 | Gabriel de Leão Rocha | 571330 |
+| Pedro Henrique de Souza Elias | 570487 |
+| Mauricio Furlan Rodrigues Chaves | 572512 |
+|    ...        |   ...     |
 
 ---
 
