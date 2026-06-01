@@ -133,13 +133,40 @@ contraditórias (sensor reportando dados conflitantes) e gera um diagnóstico.
 ## 6. Como Executar
 
 **Requisitos:** Python 3.10+ (uso de type hints `X | None`; não usa bibliotecas
-externas, apenas `csv` e `os` da biblioteca padrão).
+externas, apenas `csv`, `os` e `tkinter` da biblioteca padrão — `tkinter` é
+opcional, usado só pela interface gráfica).
+
+### Modo terminal (CLI)
 
 ```bash
 git clone https://github.com/GabrielLeaoRocha/Global-Sollution-Semestre-1.git
 cd Global-Sollution-Semestre-1
 python3 src/sistema.py        # ou: python3 -m src.sistema
 ```
+
+### Modo interface gráfica (GUI nativa)
+
+Um dashboard `tkinter` seguindo o **Aurora Siger Tkinter Style Guide** —
+paleta oficial (`#e90061` rosa / `#1e1e1e` cinza / `#f8f8f8` branco),
+sidebar com indicador de ativo, KPI cards com acento rosa, tabelas
+`ttk.Treeview` com seleção rosa, e **gráfico de regressão linear**
+desenhado nativamente no `tk.Canvas` (sem matplotlib).
+
+```bash
+python3 -m src.interface_grafica       # abre direto
+# ou: digite [g] no menu da CLI
+```
+
+**10 telas no dashboard:**
+Resumo (KPI cards), Módulos, Alertas, Pilha (LIFO), Hierarquia,
+Matriz, Previsão (com gráfico nativo), Diagnóstico, Log, Buscar (BST + módulo).
+
+> ⚠️ **Nota sobre `tkinter`:** o `tkinter` faz parte da biblioteca padrão, mas
+> algumas distribuições do Python (ex: Python via Homebrew no macOS) não o
+> incluem por padrão. Use o Python oficial do
+> [python.org](https://www.python.org/downloads/) ou instale via:
+> `brew install python-tk` (macOS) ou `sudo apt install python3-tk` (Debian/Ubuntu).
+> A CLI funciona em qualquer Python.
 
 ### Menu interativo
 
@@ -242,9 +269,15 @@ Global-Sollution-Semestre-1/
 │   ├── previsao/                     análise estatística
 │   │   ├── __init__.py
 │   │   └── regressao.py              regressão linear simples
-│   └── exibicao/                     camada de apresentação
-│       ├── __init__.py
-│       └── relatorios.py             funções de display no terminal
+│   ├── exibicao/                     camada de apresentação
+│   │   ├── __init__.py
+│   │   └── relatorios.py             funções de display no terminal
+│   ├── gui/                          dashboard tkinter (style guide oficial)
+│   │   ├── __init__.py
+│   │   ├── theme.py                  paleta, fontes, ttk.Style global
+│   │   ├── widgets.py                make_kpi_card, make_nav_item, status_dot
+│   │   └── charts.py                 gráfico de linha nativo no Canvas
+│   └── interface_grafica.py          dashboard principal (orquestra src/gui)
 └── docs/
     ├── relatorio.pdf                 (a entregar)
     ├── link_video.txt                (a entregar)

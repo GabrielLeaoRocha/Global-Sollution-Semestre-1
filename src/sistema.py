@@ -152,6 +152,7 @@ def menu() -> None:
         print()
         for chave, (rotulo, _) in opcoes.items():
             print(f"    [{chave:>2s}] {rotulo}")
+        print(f"    [ g] Abrir interface grafica (tkinter)")
         print(f"    [ q] Sair")
         print()
         escolha = input("  > ").strip().lower()
@@ -159,11 +160,25 @@ def menu() -> None:
         if escolha == "q":
             print("  Encerrando.")
             return
+        if escolha == "g":
+            _abrir_interface_grafica()
+            continue
         if escolha in opcoes:
             opcoes[escolha][1]()
             input("\n  (enter para voltar ao menu)")
         else:
             print("  Opcao invalida.")
+
+
+def _abrir_interface_grafica() -> None:
+    """Lanca a GUI tkinter (bloqueia ate a janela ser fechada)."""
+    try:
+        from src.interface_grafica import main as gui_main
+        gui_main()
+    except ImportError as erro:
+        print(f"  ERRO: nao foi possivel carregar a interface grafica - {erro}")
+    except Exception as erro:
+        print(f"  ERRO ao abrir a interface grafica: {erro}")
 
 
 def _executar_tudo(
