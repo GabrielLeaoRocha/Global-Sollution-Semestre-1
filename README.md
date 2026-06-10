@@ -327,7 +327,7 @@ Global-Sollution-Semestre-1/
 
 Link do vídeo (YouTube, "Não Listado"):
 
-> *A ser adicionado em `docs/link_video.txt` ao final da implementação.*
+> https://www.youtube.com/watch?v=KVR3lpWPoi0
 
 ---
 
